@@ -8,6 +8,9 @@ using namespace std;
 
 // int getUserId(json& js) { return js["id"].get<int>(); }
 // std::string getUserName(json& js) { return js["name"]; }
+/**
+ * @pragm 聊天服务类，包含各种事件
+*/
 
 ChatService::ChatService()
 {
@@ -20,7 +23,6 @@ ChatService::ChatService()
     _msgHandlerMap.insert({CREATE_GROUP_MSG, std::bind(&ChatService::createGroup, this, _1, _2, _3)});
     _msgHandlerMap.insert({ADD_GROUP_MSG, std::bind(&ChatService::addGroup, this, _1, _2, _3)});
     _msgHandlerMap.insert({GROUP_CHAT_MSG, std::bind(&ChatService::groupChat, this, _1, _2, _3)});
-
     if (_redis.connect())
     {
         _redis.init_notify_handler(std::bind(&ChatService::redis_subscribe_message_handler, this, _1, _2));
@@ -103,7 +105,6 @@ void ChatService::oneChatHandler(const TcpConnectionPtr &conn, json &js, Timesta
 {
     // 需要接收信息的用户ID
     int toId = js["toid"].get<int>();
-    
     {
         lock_guard<mutex> lock(_connMutex);
         auto it = _userConnMap.find(toId);
@@ -117,10 +118,11 @@ void ChatService::oneChatHandler(const TcpConnectionPtr &conn, json &js, Timesta
     }
     
     // 用户在其他主机的情况，publish消息到redis
-    User user = _userModel.query(toId);
+
+    User user = _userModel.query(toId);//从数据库中查询是否在线
     if (user.getState() == "online")
     {
-        _redis.publish(toId, js.dump());
+        _redis.publish(toId, js.dump());//在线直接发送给redis
         return;
     }
 
@@ -133,7 +135,6 @@ void ChatService::addFriendHandler(const TcpConnectionPtr &conn, json &js, Times
 {
     int userId = js["id"].get<int>();
     int friendId = js["friendid"].get<int>();
-
     // 存储好友信息
     _friendModel.insert(userId, friendId);
 }
@@ -272,11 +273,9 @@ void ChatService::loginHandler(const TcpConnectionPtr &conn, json &js, Timestamp
                 }
                 response["friends"] = vec;
             }
-
             conn->send(response.dump());
         }
-    }
-    
+    }   
 }
 
 // 注册业务

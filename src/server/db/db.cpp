@@ -35,7 +35,6 @@ bool MySQL::connect()
     {
         LOG_INFO << "connect mysql failed!";
     }
-
     return p;
 }
 

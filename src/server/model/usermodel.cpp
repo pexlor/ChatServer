@@ -14,11 +14,10 @@ bool UserModel::insert(User& user)
     {
         if (mysql.update(sql))
         {
-            user.setId(mysql_insert_id(mysql.getConnection()));
+            user.setId(mysql_insert_id(mysql.getConnection()));//获取自增id
             return true;
         }
     }
-
     return false;
 }
 
@@ -47,9 +46,7 @@ User UserModel::query(int id)
                 return user;
             }
         }
-
     }
-
     // 返回空User
     return User();
 }

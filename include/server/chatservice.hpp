@@ -62,7 +62,7 @@ private:
     std::unordered_map<int, MsgHandler> _msgHandlerMap;
     
     // 存储在线用户的通信连接
-    std::unordered_map<int, TcpConnectionPtr> _userConnMap;
+    std::unordered_map<int, TcpConnectionPtr> _userConnMap;//哈希表存储
 
     // 定义互斥锁
     std::mutex _connMutex;

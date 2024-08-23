@@ -101,7 +101,7 @@ std::vector<Group> GroupModel::queryGroups(int userid)
 std::vector<int> GroupModel::queryGroupUsers(int userid, int groupid)
 {
     char sql[1024] = {0};
-    sprintf(sql, "select userid from groupuser where groupid = %d and userid != %d", groupid, userid);
+    sprintf(sql, "select userid from groupuser where groupid = %d and userid != %d", groupid, userid);//排除自己的id
 
     vector<int> idVec;
     MySQL mysql;

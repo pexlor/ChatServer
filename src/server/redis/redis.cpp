@@ -1,6 +1,8 @@
 #include "redis.hpp"
 #include <iostream>
-
+/*
+    基于频道(Channel)的发布/订阅
+*/
 Redis::Redis() : publish_context_(nullptr), subcribe_context_(nullptr)
 {
 }
@@ -39,7 +41,7 @@ bool Redis::connect()
     thread t([&]() {
         observer_channel_message();
     });
-    t.detach();
+    t.detach();//分离线程
 
     cout << "connect redis-server success!" << endl;
     return true;
